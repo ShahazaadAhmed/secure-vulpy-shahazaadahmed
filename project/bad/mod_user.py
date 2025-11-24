@@ -2,6 +2,41 @@ from flask import Blueprint, render_template, redirect, request, g, session, mak
 import libmfa
 import libuser
 import libsession
+import sqlite3
+from functools import wraps
+
+def requires_role(required_role):
+    def decorator(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            uname = None
+            try:
+                uname = g.session.get('username') if g.get('session') else None
+            except Exception:
+                uname = None
+
+            if not uname:
+                return redirect('/user/login')
+
+            try:
+                conn = sqlite3.connect('db_users.sqlite')
+                cur = conn.cursor()
+                cur.execute("SELECT role FROM users WHERE username = ?", (uname,))
+                row = cur.fetchone()
+                conn.close()
+                role = row[0] if row and row[0] is not None else 'user'
+            except Exception as e:
+                print("RBAC DB error:", e)
+                role = 'user'
+
+            role_norm = str(role).strip().lower()
+            req_norm = str(required_role).strip().lower()
+            print(f"RBAC check: user={uname!r}, role={role!r}, required={required_role!r}")  # debug line
+            if role_norm != req_norm:
+                return make_response("403 Forbidden", 403)
+            return f(*args, **kwargs)
+        return wrapped
+    return decorator
 
 mod_user = Blueprint('mod_user', __name__, template_folder='templates')
 

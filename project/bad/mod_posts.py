@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Blueprint, render_template, redirect, request, g
-
+from mod_user import requires_role
 import libposts
 import libuser
 
@@ -20,6 +20,12 @@ def do_view(username=None):
 
     return render_template('posts.view.html', posts=posts, username=username, users=users)
 
+@mod_posts.route('/admin')
+@requires_role('admin')
+def admin_panel():
+    posts = libposts.get_posts(None)
+    users = libuser.userlist()
+    return render_template('admin.html', posts=posts, users=users)
 
 @mod_posts.route('/', methods=['POST'])
 def do_create():
