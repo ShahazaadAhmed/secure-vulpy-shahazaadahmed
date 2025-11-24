@@ -149,7 +149,7 @@ Do not use this code in real-world systems.
 
 ---
 
-## 👨‍💻 Author
+## 👨‍💻 Author of aditional features.
 
 **Shahazaad Ahmed**
 GitHub: [https://github.com/ShahazaadAhmed](https://github.com/ShahazaadAhmed)
