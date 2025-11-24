@@ -1,30 +1,26 @@
 import json
 import base64
 
-
 def create(response, username):
-    session = base64.b64encode(json.dumps({'username': username}).encode())
-    response.set_cookie('vulpy_session', session)
+    session = {'username': username}
+    cookie_val = base64.b64encode(json.dumps(session).encode()).decode('ascii')
+    response.set_cookie('vulpy_session', cookie_val, httponly=True, samesite='Lax')
     return response
-
 
 def load(request):
-
     session = {}
     cookie = request.cookies.get('vulpy_session')
-
+    if not cookie:
+        return session
     try:
-        if cookie:
-            decoded = base64.b64decode(cookie.encode())
-            if decoded:
-                session = json.loads(base64.b64decode(cookie))
+        decoded = base64.b64decode(cookie)
+        if not decoded:
+            return session
+        session = json.loads(decoded.decode('utf-8'))
     except Exception:
-        pass
-
+        return {}
     return session
 
-
 def destroy(response):
-    response.set_cookie('vulpy_session', '', expires=0)
+    response.set_cookie('vulpy_session', '', expires=0, httponly=True, samesite='Lax')
     return response
-
