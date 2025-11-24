@@ -2,9 +2,9 @@
 
 ## Description
 
-The **Secure Vulpy – Baseline Version** is the intentionally vulnerable starting point for the CA2 Web Security project. This version contains the original insecure code from:
+The **Secure Vulpy – Baseline Version** is the intentionally vulnerable starting point for the CA2 Web Security project. This version contains the original insecure code from: ([Original Initial version Creator](https://github.com/fportantier))
 
-🔗 **[https://github.com/fportantier/vulpy](https://github.com/fportantier/vulpy)** (BAD insecure version)
+🔗 **[https://github.com/fportantier/vulpy](https://github.com/fportantier/vulpy)** (insecure version) 
 
 As required by CA2, this repository acts as the **baseline commit before any security patches** are applied. It also includes **additional features** such as RBAC (Role-Based Access Control) and admin-only navigation visibility, which were added *before* applying any security fixes.
 
@@ -85,7 +85,8 @@ These will be secured in later stages.
 git clone https://github.com/ShahazaadAhmed/secure-vulpy-shahazaadahmed
 cd secure-vulpy-shahazaadahmed
 pip install -r requirements.txt
-python app.py
+cd project/bad/
+python vulpy.py
 ```
 
 ⚠️ **Warning:**
@@ -98,10 +99,10 @@ This is the baseline vulnerable version. Do NOT deploy it in a production enviro
 ```
 secure-vulpy-shahazaadahmed/
 │
-├── app.py                 # Main vulnerable web app
+├── vulpy.py             # Main vulnerable web app
 ├── templates/             # HTML templates (some intentionally insecure)
 ├── static/                # CSS/JS
-├── database.db            # SQLite DB with RBAC fields added
+├── db_users.db            # SQLite DB with RBAC fields added
 ├── requirements.txt
 └── README.md              # Project documentation
 ```
