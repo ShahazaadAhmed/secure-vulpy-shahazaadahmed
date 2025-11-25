@@ -1,156 +1,123 @@
-# 🔐 Secure Vulpy – Baseline Vulnerable Version
+# Vulpy (BAD Version) – Vulnerable Web Application
 
-## Description
+## Project Overview
 
-The **Secure Vulpy – Baseline Version** is the intentionally vulnerable starting point for the CA2 Web Security project. This version contains the original insecure code from: ([Original Initial version Creator](https://github.com/fportantier))
+Vulpy (BAD Version) is the intentionally vulnerable version of the Secure Vulpy project. It serves as the **baseline insecure application** used for analysis, testing, and hardening in the Secure Web Development CA2 assessment.
 
-🔗 **[https://github.com/fportantier/vulpy](https://github.com/fportantier/vulpy)** (insecure version) 
-
-As required by CA2, this repository acts as the **baseline commit before any security patches** are applied. It also includes **additional features** such as RBAC (Role-Based Access Control) and admin-only navigation visibility, which were added *before* applying any security fixes.
-
-This ensures a clear progression from:
-
-❌ **Vulnerable →** ⚙️ **Modified (Features Added) →** 🛡️ **Secure Version**
-
-Your live project repo:
-👉 **[https://github.com/ShahazaadAhmed/secure-vulpy-shahazaadahmed](https://github.com/ShahazaadAhmed/secure-vulpy-shahazaadahmed)**
+This version contains multiple known and deliberate vulnerabilities across authentication, session handling, database queries, access control, and user input processing. It is used **only for educational and testing purposes**.
 
 ---
 
-## 🧩 CA2 Project Requirements Fulfilled
+## Insecure Features & Known Vulnerabilities
 
-This baseline repository fulfills the following CA2 requirements:
+The BAD version includes the following intentionally insecure behaviors:
 
-### ✔ Baseline Vulnerable Web Application
+### Authentication & Password Issues
 
-* Contains the original **BAD Vulpy code**, intentionally insecure.
-* No security fixes applied in this stage.
+* Plaintext password storage
+* No password complexity requirements
+* Direct SQL queries without sanitization
+* No credential lockout or brute-force protection
 
-### ✔ Additional Features Added *Before* Security Patching
+### Session Management Flaws
 
-The assignment requires adding at least one new feature **before** starting security fixes. Added features include:
+* Sessions stored in Base64 without integrity protection
+* Session tokens not invalidated on logout
+* No HttpOnly, Secure, or SameSite cookie flags
+* Session fixation vulnerabilities
 
-#### 🔑 Role-Based Access Control (RBAC)
+### SQL Injection Vulnerabilities
 
-* Introduced user roles: **Admin** and **Normal User**.
-* Role stored in the database/session.
+* All SQL queries are built using string formatting
+* Easily exploitable via `' OR '1'='1` attacks
 
-#### 🧭 Admin-Only Navigation Bar Options
+### Cross-Site Scripting (XSS)
 
-* Navigation items visible **ONLY** for admin users.
-* Hidden from normal users.
-* Demonstrates UI-level access control.
+* User-generated posts are rendered with unsafe Jinja filters
+* Input is never sanitized
+* No Content Security Policy (CSP)
 
-These features are intentionally introduced **into the vulnerable app**, as required by CA2 instructions.
+### Broken Access Control / IDOR
 
-### ✔ Commit-Based Development
+* Any user can access `/posts/<username>`
+* No role separation (admin ≠ user)
+* Admin dashboard unprotected
 
-Your GitHub commit history shows:
+### Missing CSRF Protection
 
-1. **Initial vulnerable baseline commit**
-2. **Feature commits** (RBAC + Admin-only nav)
-3. **Upcoming secure version commits** (patched vulnerabilities)
+* All POST endpoints accept forged requests
+* No CSRF tokens in forms
 
-This commit flow clearly demonstrates the evolution from insecure → secure.
+### Summary of Critical Weaknesses
 
----
-
-## 🚀 Features in This Baseline Version
-
-### 🛑 Intentionally Vulnerable Components
-
-* SQL injection points
-* Weak authentication
-* Missing input validation
-* XSS vulnerabilities
-* Insecure session handling
-* Hardcoded secrets (as inherited from BAD version)
-
-### 🆕 Added Features (Still Vulnerable)
-
-These were added **before** any security patches:
-
-* **RBAC** (Admin & User roles)
-* **Admin-only navigation menu**
-* **Extended backend logic for role checking**
-* **Commit tracking & documentation for assessment**
-
-These will be secured in later stages.
+* SQL Injection (CWE-89)
+* XSS (CWE-79)
+* CSRF (CWE-352)
+* IDOR / Broken Access Control (CWE-639)
+* Insecure Session Handling (CWE-384)
+* Plaintext Passwords (CWE-256)
+* Missing Security Headers (CWE-693)
 
 ---
 
-## 📦 Installation
+## Project Structure (BAD Version)
+
+```
+vulpy-bad/
+│
+├── bad/
+│   ├── vulpy.py               # Main application, no security headers
+│   ├── libuser.py           # Insecure login, plaintext passwords
+│   ├── libposts.py          # SQL injection vulnerabilities
+│   ├── libsession.py        # Weak session handling
+│   ├── templates/           # Unsafe templates (XSS)
+│   ├── static/              # Styles and assets
+│   └── db_users.sqlite      # Insecure database with weak schema
+└── README.md
+```
+
+---
+
+## Setup (BAD Version)
+
+### 1. Clone Repository
 
 ```bash
-git clone https://github.com/ShahazaadAhmed/secure-vulpy-shahazaadahmed
-cd secure-vulpy-shahazaadahmed
+git clone <your_old_repo_url>
+cd vulpy-bad
+```
+
+### 2. Create Virtual Environment
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+
+### 3. Install Dependencies
+
+```bash
 pip install -r requirements.txt
-cd project/bad/
-python vulpy.py
 ```
 
-⚠️ **Warning:**
-This is the baseline vulnerable version. Do NOT deploy it in a production environment.
+### 4. Run Application
 
----
+```bash
+python bad/app.py
+```
 
-## 📁 Project Structure
+### 5. Access
 
 ```
-secure-vulpy-shahazaadahmed/
-│
-├── vulpy.py             # Main vulnerable web app
-├── templates/             # HTML templates (some intentionally insecure)
-├── static/                # CSS/JS
-├── db_users.db            # SQLite DB with RBAC fields added
-├── requirements.txt
-└── README.md              # Project documentation
+http://127.0.1.1:5000
 ```
 
 ---
 
-## 🧪 How to Test the Vulnerable Version
+## 📚 References & Credits
 
-* Use Admin credentials (if included) to view admin-only UI
-* Inspect RBAC logic introduced before patching
-* Look for vulnerabilities (XSS, SQLi, IDOR, etc.)
-* Navigate between admin/user views
-* Test endpoint access with different roles
-
-This version is purposely insecure for assessment and demonstration.
+* Original Vulnerable Repo: [https://github.com/fportantier/vulpy](https://github.com/fportantier/vulpy)
+* Flask framework
+* W3.CSS styling
 
 ---
-
-## 📘 How This Will Evolve
-
-The next commits in the secure version will include:
-
-* SQL injection prevention
-* Input sanitization
-* Output encoding
-* Secure password hashing
-* RBAC enforcement in backend
-* Session protection (HttpOnly, Secure)
-* CSRF protection
-* Hardened templates & routes
-
-Each fix will be documented in commit history + report.
-
----
-
-## 🛡 Disclaimer
-
-This project contains **intentionally vulnerable code** and is meant **only** for:
-
-* Cybersecurity coursework (CA2)
-* Ethical hacking practice
-* Secure coding demonstrations
-
-Do not use this code in real-world systems.
-
----
-
-## 👨‍💻 Author of aditional features.
-
-**Shahazaad Ahmed**
-GitHub: [https://github.com/ShahazaadAhmed](https://github.com/ShahazaadAhmed)
